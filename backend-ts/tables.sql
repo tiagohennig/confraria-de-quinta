@@ -1,0 +1,29 @@
+CREATE TABLE IF NOT EXISTS wines (
+    id VARCHAR(255) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    year INT NOT NULL,
+    producer VARCHAR(255) NOT NULL,
+    country VARCHAR(255) NOT NULL,
+    region VARCHAR(255) NOT NULL,
+    grape VARCHAR(255) NOT NULL,
+    score FLOAT,
+    tasted_at DATE NOT NULL,
+    meet_id VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS meets (
+    id VARCHAR(255) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    date DATE NOT NULL,
+    location VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS users (
+    id VARCHAR(255) PRIMARY KEY,
+    firstName VARCHAR(255) NOT NULL,
+    lastName VARCHAR(255) NOT NULL,
+    nickname VARCHAR(255),
+    email VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(255) NOT NULL
+);
