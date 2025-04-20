@@ -94,7 +94,7 @@ export const InputBox = styled.div`
     }
 `;
 
-export const LoginContainer = styled.div`
+export const HomePageContainer = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -108,5 +108,52 @@ export const LoginContainer = styled.div`
     @media (min-width: 769px) {
         max-width: 500px;
         margin: 0 auto;
+    }
+`;
+
+export const BoxMeeting = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 0 10px;
+    border: 1px solid #000000;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+        background-color: #f0f0f0;
+        transform: scale(1.02);
+    }
+
+    .input-group {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+        max-width: 350px;
+        margin-bottom: 20px;
+    }
+`;
+
+export const BoxWines = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 0 10px;
+    border: 1px solid #000000;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+        background-color: #f0f0f0;
+        transform: scale(1.02);
     }
 `;

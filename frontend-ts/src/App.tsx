@@ -3,14 +3,13 @@ import GlobalStyle from './GlobalStyle/GlobalStyle';
 import Router from './routes/Router';
 
 function App() {
-	return (
-		<>
-			<GlobalState>
-				<Router>
-				</Router>
-			</GlobalState>
-		</>
-	);
+    return (
+        <>
+            <GlobalState>
+                <Router />
+            </GlobalState>
+        </>
+    );
 }
 
 export default App;

@@ -11,3 +11,7 @@ export const goToRegister = (navigate: NavigateFunction) => {
 export const goBack = (navigate: NavigateFunction) =>{
     navigate(-1)
 }
+
+export const goToHomePage = (navigate: NavigateFunction) => {
+    navigate('/home')
+}
