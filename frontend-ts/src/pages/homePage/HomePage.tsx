@@ -1,9 +1,9 @@
-import { InputBox, HomePageContainer, LogoContainer, BoxMeeting, BoxWines } from "./style";
+import { InputBox, HomePageContainer, LogoContainer, BoxMeeting, BoxWines, LineWithText, NextMeeting, BlackButton, ButtonContainer } from "./style";
 import logo from "../../Images/logo.png";
 import { useNavigate } from "react-router-dom";
 import axios, { AxiosResponse } from "axios";
 import { useState } from "react";
-import { goToHomePage, goToLoginPage } from "../../routes/Coordinator";
+import { goToHomePage, goToLoginPage, goToWinesPage } from "../../routes/Coordinator";
 
 export const HomePage: React.FC = () => {
     const navigate = useNavigate();
@@ -28,6 +28,14 @@ const wineMeetings = [
     { id: 6, name: "Vinhos de Sobremesa", description: "Uma seleção de vinhos de sobremesa." }
 ];
 
+    const handleMeetingDetails = (id: string) => {
+        navigate(`/meeting/${id}`);
+    }
+
+    const handleLogo = () => {
+        goToHomePage(navigate)
+    }
+
 const mapWineMeetings = () => {
     return wineMeetings.map((wine) => {
         const handleClick = () => {
@@ -35,7 +43,7 @@ const mapWineMeetings = () => {
         };
 
         return (
-            <BoxMeeting key={wine.id} onClick={handleClick}>
+            <BoxMeeting key={wine.id} onClick={() => handleMeetingDetails("2")}>
                 <h1>{wine.name}</h1>
                 <p>{wine.description}</p>
             </BoxMeeting>
@@ -61,35 +69,43 @@ const mapWineMeetings = () => {
     // };
 
     const handleWines = () => {
-        goToHomePage(navigate);
+        goToWinesPage(navigate);
     };
 
     const handleLogout = () => {
-        goToHomePage(navigate);
+        goToLoginPage(navigate);
     };
 
     return (
         <HomePageContainer>
-
-            <LogoContainer>
+            <LogoContainer onClick={handleLogo}>
                 <img src={logo} alt="Confraria de Quinta" />
             </LogoContainer>
-
-            <BoxWines onClick={handleClickWines}>
+    
+            <BoxWines onClick={handleWines}>
                 <h1>Vinhos degustados</h1>
             </BoxWines>
-
-            <span>Próximo encontro</span>
-            
-            <BoxMeeting>
+    
+            <LineWithText>
+                <span>Próximo encontro</span>
+            </LineWithText>
+    
+            <NextMeeting onClick={() => handleMeetingDetails("1")}>
                 <h1>Vinhos brancos</h1>
-            </BoxMeeting>
-
-            <span>Encontros anteriores</span>
-
+                <p>Uma seleção de vinhos brancos.</p>
+            </NextMeeting>
+    
+            <LineWithText>
+                <span>Encontros anteriores</span>
+            </LineWithText>
+    
             {mapWineMeetings()}
 
-            <button onClick={handleLogout}>Sair</button>
+            <ButtonContainer>
+                <BlackButton onClick={handleLogout}>
+                    Sair
+                </BlackButton>
+            </ButtonContainer>
 
         </HomePageContainer>
     );

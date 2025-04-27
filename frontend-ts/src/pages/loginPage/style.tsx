@@ -66,7 +66,7 @@ export const InputBox = styled.div`
         border-radius: 8px;
         border: none;
         cursor: pointer;
-        font-size: 18px;
+        font-size: 22px;
         font-weight: 600;
         margin-top: 30px;
         transition: all 0.3s ease;
