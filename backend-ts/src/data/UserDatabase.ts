@@ -1,72 +1,46 @@
 import { CustomError } from "../error/CustomError";
-import { EditUserInput, user } from "../model/user";
+import { User } from "../model/user";
 import { BaseDatabase } from "./BaseDatabase";
+import { v4 as uuid } from "uuid";
 
 export class UserDatabase extends BaseDatabase {
-  public insertUser = async (user: user) => {
+  public insertUser = async (user: User) => {
     try {
       await UserDatabase.queryBuilder()
         .insert({
-          id: user.id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          nickname: user.nickname,
-          email: user.email,
+          id: uuid(),
+          username: user.username,
           password: user.password,
-          role: user.role
+          is_admin: user.isAdmin
         })
         .into("users");
     } catch (error: any) {
+      console.error("Erro detalhado:", error);
       throw new CustomError(400, error.sqlMessage);
     }
   };
 
-  public editUser = async (user: EditUserInput) => {
-    try {
-      await UserDatabase.queryBuilder()
-        .update({ firstName: user.firstName, lastName:user.lastName, nickname: user.nickname })
-        .where({ id: user.id })
-        .into("users");
-    } catch (error: any) {
-      throw new CustomError(400, error.sqlMessage);
-    }
-  };
-
-  public findUserByEmail = async (email: string) => {
+  public findUserByUsername = async (username: string) => {
     try {
       const result = await UserDatabase.queryBuilder()
         .select()
         .from("users")
-        .where({email});
-      return result[0];
-    } catch (error: any) {
-      throw new CustomError(400, error.sqlMessage);
-    }
-  };
-  
-  public getUserById = async (id: string) => {
-    try {
-      const result = await UserDatabase.queryBuilder()
-        .select()
-        .from("users")
-        .where({id});
+        .where({username});
       return result[0];
     } catch (error: any) {
       throw new CustomError(400, error.sqlMessage);
     }
   };
 
-  public login = async (email: string) => {
+  public login = async (username: string) => {
     try {
       const result = await UserDatabase.queryBuilder()
         .select()
         .from("users")
-        .where({email});
+        .where({username});
       return result[0];
     } catch (error: any) {
       throw new CustomError(400, error.sqlMessage);
     }
   }
-
-
 }

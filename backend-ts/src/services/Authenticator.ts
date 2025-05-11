@@ -1,10 +1,14 @@
-import { AuthenticationData } from "../model/types";
+import { AuthenticationData } from "../model/user";
 import * as jwt from "jsonwebtoken";
 
 class Authenticator {
-    generateToken = (payload: AuthenticationData) :string => {
+    generateToken = (payload: AuthenticationData): string => {
+        // Make sure payload includes isAdmin
         const token = jwt.sign(
-            payload, 
+            {
+                username: payload.username,
+                isAdmin: payload.isAdmin
+            }, 
             process.env.JWT_KEY as string, 
             {expiresIn: parseInt(process.env.JWT_EXPIRES_IN as string, 10)}
         )
@@ -12,7 +16,7 @@ class Authenticator {
         return token
     }
 
-    getTokenData = (token: string) :AuthenticationData => {
+    getTokenData = (token: string): AuthenticationData => {
         const result = jwt.verify(
             token, 
             process.env.JWT_KEY as string

@@ -1,26 +1,26 @@
 
 import { MeetDatabase } from "../data/MeetDatabase";
-import { MeetInput, MeetUpdateDTO } from "../model/meet";
+import { Meeting } from "../model/meet";
 import { generateId } from "../services/generateId";
 
 export class MeetBusiness {
-    public createMeet = async (input: MeetInput) => {
-        const { name, date, location } = input;
+    public createMeet = async (input: Meeting) => {
 
-        if (!name || !date || !location) {
+        const { id, name, date, place, description } = input;
+
+        if (!name || !date || !place || !description) {
             throw new Error(
                 'All fields are required. Please provide "name", "date", and "location"'
             );
         }
-
-        const id: string = generateId();
 
         const meetDatabase = new MeetDatabase();
         await meetDatabase.insertMeet({
             id,
             name,
             date,
-            location,
+            place,
+            description
         });
     };
 
@@ -37,24 +37,6 @@ export class MeetBusiness {
             throw new Error("Meet not found");
         }
         return meet;
-    };
-
-    public updateMeet = async (input: MeetUpdateDTO) => {
-        const { id, name, date, location } = input;
-
-        if (!id || !name || !date || !location) {
-            throw new Error(
-                '"id", "name", "date", and "location" are required'
-            );
-        }
-
-        const meetDatabase = new MeetDatabase();
-        await meetDatabase.updateMeet({
-            id,
-            name,
-            date,
-            location,
-        });
     };
 
     public deleteMeet = async (id: string) => {

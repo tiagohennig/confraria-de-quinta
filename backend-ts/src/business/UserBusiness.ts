@@ -1,62 +1,55 @@
 import { UserDatabase } from "../data/UserDatabase";
 import { CustomError } from "../error/CustomError";
 import { InvalidPassword, UnathorizedUser, UserNotFound } from "../error/CustomError";
-import { AuthenticationData } from "../model/types";
+import { AuthenticationData, UserLoginInput } from "../model/user";
 import {
-  UserInputDTO,
-  user,
-  EditUserInputDTO,
-  EditUserInput,
-  LoginUserInputDTO,
+  User,
 } from "../model/user";
 import Authenticator from "../services/Authenticator";
 import HashManager from "../services/HashManager";
-import IdGenerator from "../services/IdGenerator";
 
 export class UserBusiness {
 
   userDB = new UserDatabase()
 
-  public createUser = async (input :UserInputDTO) => {
-    let {firstName, lastName, nickname, email, password, role} = input 
+  public createUser = async (input :User) => {
+    let {username, password, isAdmin} = input 
 
-    if (!firstName || !lastName || !email || !password || !role) {
+    if (!username|| !password) {
       throw new CustomError(422, "Ausência de parâmetro") 
     }
 
-    if (role !== "NORMAL" && role !== "ADMIN"){
-      role = "NORMAL"
+    if (!isAdmin){
+      isAdmin = false
     }
 
-    const id = IdGenerator.generateId()
     const hash = await HashManager.generateHash(password)
 
-    const user :user = {
-      id, 
-      email, 
+    const user :User = {
+      username, 
       password: hash, 
-      firstName,
-      lastName,
-      nickname: nickname,
-      role
+      isAdmin
     }
 
     
     await this.userDB.insertUser(user)
 
-    const token = Authenticator.generateToken({id, role})
+    const token = Authenticator.generateToken({
+      username: user.username,
+      isAdmin: user.isAdmin
+  });
 
     return token
   }
 
-  public login = async (input:LoginUserInputDTO) => {
-    let {email, password} = input 
+  public login = async (input:UserLoginInput) => {
+    let {username, password} = input 
 
-    if(!email || !password) {
+    if(!username || !password) {
       throw new CustomError(400, "Ausência de parâmetros")
     }
 
-    const user = await this.userDB.findUserByEmail(email)
+    const user = await this.userDB.findUserByUsername(username)
     const hashCompare = await HashManager.compareHash(
       password, 
       user.password
@@ -67,8 +60,8 @@ export class UserBusiness {
     }
 
     const payload :AuthenticationData = {
-      id: user.id, 
-      role: user.role
+      username: user.username, 
+      isAdmin: user.is_admin
     }
 
     const token = Authenticator.generateToken(payload)
@@ -76,32 +69,4 @@ export class UserBusiness {
     return token
   }
 
-  public editUser = async (input:EditUserInputDTO, token: string) => {
-    let {firstName, lastName, nickname, id} = input 
-
-    if (!firstName || !lastName || !nickname || !token) {
-      throw new CustomError(422, "Ausência de parâmetro") 
-    }
-
-    const userExist = await this.userDB.getUserById(id)
-    if(!userExist){
-      throw new UserNotFound()
-    }
-
-    const tokenData = Authenticator.getTokenData(token)
-    console.log(tokenData)
-
-    if(tokenData.role !== "ADMIN") {
-      throw new UnathorizedUser()
-    }
-
-    const editedUser :EditUserInput = {
-      firstName,
-      lastName,
-      nickname, 
-      id
-    }
-
-    await this.userDB.editUser(editedUser)
-  }
 }

@@ -1,14 +1,14 @@
 import { WineDatabase } from "../data/WineDatabase";
-import { WineInput, WineUpdateDTO } from "../model/wineDTO";
+import { Wine } from "../model/wineDTO";
 import { generateId } from "../services/generateId";
 
 export class WineBusiness {
-  public createWine = async (input: WineInput) => {
-    const { name, year, producer, grape, tastedAt, meetId, country, region } = input;
+  public createWine = async (input: Wine) => {
+    const { name, year, producer, grape, meetId, country, region } = input;
 
-    if (!name || !year || !producer || !grape || !tastedAt || !meetId || !country || !region) {
+    if (!name || !year || !producer || !grape || !meetId || !country || !region) {
       throw new Error(
-        'All fields are required. Please provide "name", "year", "producer", "grape", "tastedAt", and "meetId"'
+        'All fields are required. Please provide "name", "year", "producer", "grape", "meetId", "country", and "region."'
       );
     }
 
@@ -23,8 +23,9 @@ export class WineBusiness {
       country,
       region,
       grape,
-      tastedAt,
       meetId,
+      oakAgeingTime: input.oakAgeingTime,
+      price: input.price,
     });
   };
 
@@ -43,8 +44,8 @@ export class WineBusiness {
     return wine;
   };
 
-  public updateWine = async (input: WineUpdateDTO) => {
-    const { id, name, year, producer, grape, score, tastedAt, meetId, country, region } = input;
+  public updateWine = async (input: Wine) => {
+    const { id, name, year, producer, grape, meetId, country, region } = input;
 
     const wineDatabase = new WineDatabase();
     await wineDatabase.updateWine({
@@ -55,9 +56,9 @@ export class WineBusiness {
       grape,
       country,
       region,
-      score,
-      tastedAt,
       meetId,
+      oakAgeingTime: input.oakAgeingTime,
+      price: input.price,
     });
   };
 
@@ -72,9 +73,5 @@ export class WineBusiness {
     return wines;
   };
 
-  public scoreWine = async (id: string, score: number) => {
-    const wineDatabase = new WineDatabase();
-    await wineDatabase.scoreWine(id, score);
-  };
 }
 

@@ -2,13 +2,14 @@ import { InputBox, HomePageContainer, LogoContainer, BoxMeeting, BoxWines, LineW
 import logo from "../../Images/logo.png";
 import { useNavigate } from "react-router-dom";
 import axios, { AxiosResponse } from "axios";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { goToHomePage, goToLoginPage, goToWinesPage } from "../../routes/Coordinator";
+import { GlobalStateContext } from "../../Global/GlobalStateContext"; // Importe o contexto
 
 export const HomePage: React.FC = () => {
     const navigate = useNavigate();
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
+    const { token, setToken } = useContext(GlobalStateContext); // Use o token do contexto global
+    const { isAdmin } = useContext(GlobalStateContext); // Use o isAdmin do contexto global
     const BASE_URL = "https://confrariadequinta.herokuapp.com/";
 
     const handleUsername = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,6 +82,11 @@ const mapWineMeetings = () => {
             <LogoContainer onClick={handleLogo}>
                 <img src={logo} alt="Confraria de Quinta" />
             </LogoContainer>
+
+            {isAdmin && <div>
+                <button>Criar uma reunião</button>
+                <button>Adicionar vinho</button>
+            </div>}
     
             <BoxWines onClick={handleWines}>
                 <h1>Vinhos degustados</h1>

@@ -8,36 +8,61 @@ interface GlobalStateProps {
     children: React.ReactNode;
 }
 
-const GlobalState: React.FC<GlobalStateProps> = ({ children }) => {
-    const [profile, setProfile] = useState<any[]>([]);
-    const [restaurants, setRestaurants] = useState<any[]>([]);
-    const [restDetail, setRestDetail] = useState<any[]>([]);
-    const [namesValue, setValueNames] = useState("");
-    const [category, setCategory] = useState("");
-    const [change, setChange] = useState(false);
-    const [cartBasket, setCart] = useState<any[]>([]);
-    const [order, setOrder] = useState<any[]>([]);
-    const [history, setHistory] = useState<any[]>([]);
+// Interface para o payload do token decodificado
+interface TokenPayload {
+    isAdmin: boolean;
+    username?: string;
+    userId?: string;
+    iat?: number;
+    exp?: number;
+    // outros campos que possam existir no payload
+}
 
-    const contextValue = {
-        restaurants,
-        history,
-        restDetail,
-        setValueNames,
-        namesValue,
-        category,
-        setCategory,
-        setProfile,
-        profile,
-        change,
-        setChange,
-        cartBasket,
-        order,
-        setOrder
+// Função para decodificar o token JWT
+const decodeToken = (token: string): TokenPayload | null => {
+    try {
+        // Dividir o token em suas partes
+        const parts = token.split('.');
+        if (parts.length !== 3) return null;
+        
+        // Decodificar a parte do payload (segunda parte)
+        const payload = parts[1];
+        const decodedPayload = atob(payload);
+        const parsedPayload = JSON.parse(decodedPayload);
+        
+        return parsedPayload;
+    } catch (error) {
+        console.error("Erro ao decodificar token:", error);
+        return null;
+    }
+};
+
+const GlobalState: React.FC<GlobalStateProps> = ({ children }) => {
+    const [token, setToken] = useState<string>("");
+    const [isAdmin, setIsAdmin] = useState<boolean>(false);
+
+    const checkAdmin = async (token: string) => {
+        const payload = decodeToken(token);
+        console.log("Payload decodificado:", payload);
+        if (payload && payload.isAdmin) {
+            setIsAdmin(true);
+        } else {
+            setIsAdmin(false);
+        }
+    }
+
+    useEffect(() => {
+        checkAdmin(token);
+    }, [token]);
+
+    const globalState = {
+        token,
+        setToken,
+        isAdmin,
     };
 
     return (
-        <GlobalStateContext.Provider value={contextValue}>
+        <GlobalStateContext.Provider value={globalState}>
             {children}
         </GlobalStateContext.Provider>
     );

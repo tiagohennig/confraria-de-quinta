@@ -3,5 +3,5 @@ import { userRouter } from "./controller/routes/userRouter"
 import { wineRouter } from "./controller/routes/wineRouter"
 
 
-app.use('/usuario/', userRouter)
+app.use('/', userRouter)
 app.use('/vinhos/', wineRouter)

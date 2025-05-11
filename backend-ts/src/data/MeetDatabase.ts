@@ -1,23 +1,23 @@
 import { BaseDatabase } from "./BaseDatabase";
-import { MeetInputDTO, MeetUpdateDTO } from "../model/meet";
+import { Meeting } from "../model/meet";
 
 export class MeetDatabase extends BaseDatabase {
   private static TABLE_NAME = "meets";
 
-  public async insertMeet(meet: MeetInputDTO): Promise<void> {
+  public async insertMeet(meet: Meeting): Promise<void> {
     await BaseDatabase.queryBuilder()
       .insert(meet)
       .into(MeetDatabase.TABLE_NAME);
   }
 
-  public async getAllMeets(): Promise<MeetInputDTO[]> {
+  public async getAllMeets(): Promise<Meeting[]> {
     const result = await BaseDatabase.queryBuilder()
       .select("*")
       .from(MeetDatabase.TABLE_NAME);
     return result;
   }
 
-  public async getMeetById(id: string): Promise<MeetInputDTO | null> {
+  public async getMeetById(id: string): Promise<Meeting | null> {
     const result = await BaseDatabase.queryBuilder()
       .select("*")
       .from(MeetDatabase.TABLE_NAME)
@@ -25,7 +25,7 @@ export class MeetDatabase extends BaseDatabase {
     return result[0] || null;
   }
 
-  public async updateMeet(meet: MeetUpdateDTO): Promise<void> {
+  public async updateMeet(meet: Meeting): Promise<void> {
     await BaseDatabase.queryBuilder()
       .update(meet)
       .where({ id: meet.id })

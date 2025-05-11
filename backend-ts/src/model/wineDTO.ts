@@ -1,6 +1,4 @@
-//implement wineDTO
-
-export interface WineInputDTO {
+export interface Wine {
     id: string;
     name: string;
     year: number;
@@ -8,30 +6,7 @@ export interface WineInputDTO {
     country: string;
     region: string;
     grape: string;
-    tastedAt: Date;
+    oakAgeingTime: string;
     meetId: string;
-}
-
-export interface WineUpdateDTO {
-    id: string;
-    name: string;
-    year: number;
-    producer: string;
-    country: string;
-    region: string;
-    grape: string;
-    score: number;
-    tastedAt: Date;
-    meetId: string;
-}
-
-export interface WineInput {
-    name: string;
-    year: number;
-    producer: string;
-    country: string;
-    region: string;
-    grape: string;
-    tastedAt: Date;
-    meetId: string;
+    price: number;
 }

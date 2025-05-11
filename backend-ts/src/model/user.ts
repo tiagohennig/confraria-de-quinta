@@ -1,38 +1,16 @@
 
-export type user = {
-   id: string
-   email: string
+export type User = {
+   username: string
    password: string
-   firstName: string
-   lastName: string
-   nickname: string
-   role: string
+   isAdmin: boolean
 }
 
-export interface UserInputDTO {
-   firstName: string,
-   lastName: string,
-   nickname: string,
-   email: string,
-   password: string
-   role: string
-}
-
-export interface LoginUserInputDTO {
-   email: string,
+export type UserLoginInput = {
+   username: string
    password: string
 }
 
-export interface EditUserInputDTO {
-   firstName: string,
-   lastName: string,
-   nickname: string,
-   id: string
-}
-
-export interface EditUserInput {
-   firstName: string,
-   lastName: string,
-   nickname: string,
-   id: string
+export interface AuthenticationData {
+   username: string;
+   isAdmin: boolean;
 }

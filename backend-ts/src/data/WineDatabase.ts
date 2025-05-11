@@ -1,24 +1,24 @@
-import { WineInputDTO, WineUpdateDTO } from "../model/wineDTO";
+import { Wine } from "../model/wineDTO";
 import { BaseDatabase } from "./BaseDatabase";
 
 
 export class WineDatabase extends BaseDatabase {
   private static TABLE_NAME = "wines";
 
-  public async insertWine(wine: WineInputDTO): Promise<void> {
+  public async insertWine(wine: Wine): Promise<void> {
     await BaseDatabase.queryBuilder()
       .insert(wine)
       .into(WineDatabase.TABLE_NAME);
   }
 
-  public async getAllWines(): Promise<WineInputDTO[]> {
+  public async getAllWines(): Promise<Wine[]> {
     const result = await BaseDatabase.queryBuilder()
       .select("*")
       .from(WineDatabase.TABLE_NAME);
     return result;
   }
 
-  public async getWineById(id: string): Promise<WineInputDTO | null> {
+  public async getWineById(id: string): Promise<Wine | null> {
     const result = await BaseDatabase.queryBuilder()
       .select("*")
       .from(WineDatabase.TABLE_NAME)
@@ -26,7 +26,7 @@ export class WineDatabase extends BaseDatabase {
     return result[0] || null;
   }
 
-  public async updateWine(wine: WineUpdateDTO): Promise<void> {
+  public async updateWine(wine: Wine): Promise<void> {
     await BaseDatabase.queryBuilder()
       .update(wine)
       .where({ id: wine.id })
@@ -40,19 +40,12 @@ export class WineDatabase extends BaseDatabase {
       .where({ id });
   }
 
-  public async getWineByMeetId(meetId: string): Promise<WineInputDTO[]> {
+  public async getWineByMeetId(meetId: string): Promise<Wine[]> {
     const result = await BaseDatabase.queryBuilder()
       .select("*")
       .from(WineDatabase.TABLE_NAME)
       .where({ meetId });
     return result;
   }
-
-  public async scoreWine(id: string, score: number): Promise<void> {
-    await BaseDatabase.queryBuilder()
-      .update({ score })
-      .where({ id })
-      .into(WineDatabase.TABLE_NAME);
-}
 
 }

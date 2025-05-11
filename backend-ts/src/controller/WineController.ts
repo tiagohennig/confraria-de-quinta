@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { WineBusiness } from "../business/WineBusiness";
-import { WineInput, WineInputDTO, WineUpdateDTO } from "../model/wineDTO";
+import { Wine  } from "../model/wineDTO";
 
 export class WineController {
   
@@ -8,15 +8,17 @@ export class WineController {
 
   public createWine = async (req: Request, res: Response) => {
     try {
-      const input: WineInput = {
+      const input: Wine = {
+        id: req.body.id || "",
         name: req.body.name,
         year: req.body.year,
         producer: req.body.producer,
         grape: req.body.grape,
         country: req.body.country,
         region: req.body.region,
-        tastedAt: req.body.tastedAt,
-        meetId: req.body.meetId
+        meetId: req.body.meetId,
+        oakAgeingTime: req.body.oakAgeingTime,
+        price: req.body.price
       };
 
       await this.wineBusiness.createWine(input);
@@ -52,7 +54,7 @@ export class WineController {
   public updateWine = async (req: Request, res: Response) => {
     try {
       const id = req.params.id;
-      const input: WineUpdateDTO = {
+      const input: Wine = {
         id,
         name: req.body.name,
         year: req.body.year,
@@ -60,9 +62,9 @@ export class WineController {
         grape: req.body.grape,
         country: req.body.country,
         region: req.body.region,
-        score: req.body.score,
-        tastedAt: req.body.tastedAt,
-        meetId: req.body.meetId
+        meetId: req.body.meetId,
+        oakAgeingTime: req.body.oakAgeingTime,
+        price: req.body.price
       };
 
       await this.wineBusiness.updateWine(input);
@@ -97,16 +99,4 @@ export class WineController {
     }
   };
 
-  public scoreWine = async (req: Request, res: Response) => {
-    try {
-      const id = req.params.id;
-      const score = req.body.score;
-
-      await this.wineBusiness.scoreWine(id, score);
-
-      res.status(200).send({ message: "Wine scored successfully" });
-    } catch (error: any) {
-      res.status(400).send(error.message);
-    }
-  };
 }
