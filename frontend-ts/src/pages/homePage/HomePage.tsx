@@ -2,15 +2,35 @@ import { InputBox, HomePageContainer, LogoContainer, BoxMeeting, BoxWines, LineW
 import logo from "../../Images/logo.png";
 import { useNavigate } from "react-router-dom";
 import axios, { AxiosResponse } from "axios";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { goToHomePage, goToLoginPage, goToWinesPage } from "../../routes/Coordinator";
-import { GlobalStateContext } from "../../Global/GlobalStateContext"; // Importe o contexto
+import { GlobalStateContext } from "../../Global/GlobalStateContext";
+import { jwtDecode } from "jwt-decode";
 
 export const HomePage: React.FC = () => {
     const navigate = useNavigate();
-    const { token, setToken } = useContext(GlobalStateContext); // Use o token do contexto global
-    const { isAdmin } = useContext(GlobalStateContext); // Use o isAdmin do contexto global
+    const { token, setToken } = useContext(GlobalStateContext);
+    const { isAdmin, setIsAdmin } = useContext(GlobalStateContext);
     const BASE_URL = "https://confrariadequinta.herokuapp.com/";
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            const decodedToken: any = jwtDecode(token);
+            const currentTime = Date.now() / 1000; // Tempo atual em segundos
+            if (decodedToken.exp < currentTime) {
+                alert("Token expirado. Faça login novamente.");
+                localStorage.removeItem("token");
+                goToLoginPage(navigate);
+            } else {
+                setToken(token); // Atualiza o token no contexto global
+            }
+            setIsAdmin(decodedToken.isAdmin);
+        } else {
+            goToLoginPage(navigate);
+        }
+    }
+    , []);
 
     const handleUsername = (event: React.ChangeEvent<HTMLInputElement>) => {
         console.log(event.target.value);
@@ -56,19 +76,6 @@ const mapWineMeetings = () => {
         goToHomePage(navigate);
     };
 
-    // const handleLogin = () => {
-    //     const body = {
-    //         username,
-    //         password
-    //     }
-    //     axios.post(`${BASE_URL}login`, body)
-    //         .then((res: AxiosResponse<{ token: string }>) => {
-    //             localStorage.setItem('token', res.data.token);
-    //             navigate('/home');
-    //         })
-    //         .catch((err) => { alert(err.response?.data?.message || "An error occurred"); });
-    // };
-
     const handleWines = () => {
         goToWinesPage(navigate);
     };
@@ -86,6 +93,7 @@ const mapWineMeetings = () => {
             {isAdmin && <div>
                 <button>Criar uma reunião</button>
                 <button>Adicionar vinho</button>
+                <button>Adicionar usuário</button>
             </div>}
     
             <BoxWines onClick={handleWines}>

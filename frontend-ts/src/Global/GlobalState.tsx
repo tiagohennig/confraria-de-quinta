@@ -59,6 +59,7 @@ const GlobalState: React.FC<GlobalStateProps> = ({ children }) => {
         token,
         setToken,
         isAdmin,
+        setIsAdmin,
     };
 
     return (
