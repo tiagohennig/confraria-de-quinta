@@ -8,24 +8,19 @@ interface GlobalStateProps {
     children: React.ReactNode;
 }
 
-// Interface para o payload do token decodificado
 interface TokenPayload {
     isAdmin: boolean;
     username?: string;
     userId?: string;
     iat?: number;
     exp?: number;
-    // outros campos que possam existir no payload
 }
 
-// Função para decodificar o token JWT
 const decodeToken = (token: string): TokenPayload | null => {
     try {
-        // Dividir o token em suas partes
         const parts = token.split('.');
         if (parts.length !== 3) return null;
         
-        // Decodificar a parte do payload (segunda parte)
         const payload = parts[1];
         const decodedPayload = atob(payload);
         const parsedPayload = JSON.parse(decodedPayload);

@@ -1,64 +1,137 @@
 import { Request, Response } from "express";
 import { MeetBusiness } from "../business/MeetBusiness";
 import { Meeting } from "../model/meet";
-import { v4 as uuidv4 } from "uuid";
+import { CustomError } from "../services/CustomError";
 
 export class MeetController {
-
     private meetBusiness = new MeetBusiness();
 
-    public createMeet = async (req: Request, res: Response) => {
-
-        const id = uuidv4();
-
+    public createMeet = async (req: Request, res: Response): Promise<void> => {
         try {
             const input: Meeting = {
-                id,
+                id: req.body.id,
                 name: req.body.name,
                 date: req.body.date,
                 place: req.body.place,
-                description: req.body.description
+                description: req.body.description,
+                host: req.body.host,
+                maxParticipants: req.body.maxParticipants
             };
 
             await this.meetBusiness.createMeet(input);
 
-            res.status(201).send({ message: "Meet created successfully" });
+            res.status(201).send({ 
+                success: true, 
+                message: "Encontro criado com sucesso",
+                meeting: { ...input } 
+            });
         } catch (error: any) {
-            res.status(400).send(error.message);
+            if (error instanceof CustomError) {
+                res.status(error.statusCode).send({ success: false, message: error.message });
+            } else {
+                res.status(400).send({ success: false, message: error.message || "Erro inesperado" });
+            }
         }
     };
 
-    public getMeets = async (req: Request, res: Response) => {
+    public getMeets = async (req: Request, res: Response): Promise<void> => {
         try {
             const meets = await this.meetBusiness.getMeets();
 
-            res.status(200).send({ meets });
+            res.status(200).send({ 
+                success: true, 
+                meetings: meets,
+                count: meets.length 
+            });
         } catch (error: any) {
-            res.status(400).send(error.message);
+            if (error instanceof CustomError) {
+                res.status(error.statusCode).send({ success: false, message: error.message });
+            } else {
+                res.status(400).send({ success: false, message: error.message || "Erro inesperado" });
+            }
         }
     };
 
-    public getMeetById = async (req: Request, res: Response) => {
+    public getMeetById = async (req: Request, res: Response): Promise<void> => {
         try {
             const id = req.params.id;
 
             const meet = await this.meetBusiness.getMeetById(id);
 
-            res.status(200).send({ meet });
+            res.status(200).send({ 
+                success: true, 
+                meeting: meet 
+            });
         } catch (error: any) {
-            res.status(400).send(error.message);
+            if (error instanceof CustomError) {
+                res.status(error.statusCode).send({ success: false, message: error.message });
+            } else {
+                res.status(400).send({ success: false, message: error.message || "Erro inesperado" });
+            }
         }
     };
 
-    public deleteMeet = async (req: Request, res: Response) => {
+    public updateMeet = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const input: Meeting = {
+                id: req.body.id,
+                name: req.body.name,
+                date: req.body.date,
+                place: req.body.place,
+                description: req.body.description,
+                host: req.body.host,
+                maxParticipants: req.body.maxParticipants
+            };
+
+            await this.meetBusiness.updateMeet(input);
+
+            res.status(200).send({ 
+                success: true, 
+                message: "Encontro atualizado com sucesso",
+                meeting: input 
+            });
+        } catch (error: any) {
+            if (error instanceof CustomError) {
+                res.status(error.statusCode).send({ success: false, message: error.message });
+            } else {
+                res.status(400).send({ success: false, message: error.message || "Erro inesperado" });
+            }
+        }
+    };
+
+    public deleteMeet = async (req: Request, res: Response): Promise<void> => {
         try {
             const id = req.params.id;
 
             await this.meetBusiness.deleteMeet(id);
 
-            res.status(200).send({ message: "Meet deleted successfully" });
+            res.status(200).send({ 
+                success: true, 
+                message: "Encontro deletado com sucesso" 
+            });
         } catch (error: any) {
-            res.status(400).send(error.message);
+            if (error instanceof CustomError) {
+                res.status(error.statusCode).send({ success: false, message: error.message });
+            } else {
+                res.status(400).send({ success: false, message: error.message || "Erro inesperado" });
+            }
+        }
+    };
+
+    public getNextMeet = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const nextMeet = await this.meetBusiness.getNextMeet();
+
+            res.status(200).send({ 
+                success: true, 
+                meeting: nextMeet 
+            });
+        } catch (error: any) {
+            if (error instanceof CustomError) {
+                res.status(error.statusCode).send({ success: false, message: error.message });
+            } else {
+                res.status(400).send({ success: false, message: error.message || "Erro inesperado" });
+            }
         }
     };
 }

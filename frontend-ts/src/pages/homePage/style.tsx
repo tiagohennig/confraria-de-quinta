@@ -111,66 +111,6 @@ export const HomePageContainer = styled.div`
     }
 `;
 
-export const BoxMeeting = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 90%;
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 0 10px;
-    border: 1px solid #000000;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-bottom: 20px;
-    text-align: center;
-    background-color: #E5636C;
-
-    &:hover {
-        background-color: #f0f0f0;
-        transform: scale(1.02);
-    }
-
-    .input-group {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        width: 100%;
-        max-width: 350px;
-        margin-bottom: 20px;
-    }
-`;
-
-export const NextMeeting = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 90%;
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 0 10px;
-    border: 1px solid #000000;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    background-color: #E5636C;
-
-    &:hover {
-        background-color: #f0f0f0;
-        transform: scale(1.02);
-    }
-
-    .input-group {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        width: 100%;
-        max-width: 350px;
-        margin-bottom: 20px;
-    }
-`;
-
 export const LineWithText = styled.div`
     display: flex;
     align-items: center;
@@ -191,34 +131,6 @@ export const LineWithText = styled.div`
         font-weight: bold;
         color: #000000;
     }
-`;
-
-export const BoxWines = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 90%;
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 0 10px;
-    border: 1px solid #000000;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    background-color: #E5636C;
-
-    &:hover {
-        background-color: #f0f0f0;
-        transform: scale(1.02);
-    }
-`;
-
-export const ButtonContainer = styled.div`
-    margin-bottom: 20px;
-    flex-direction: column;
-    align-items: center;
-    display: flex;
-    width: 100%;
 `;
 
 export const BlackButton = styled.button`
@@ -250,5 +162,217 @@ export const BlackButton = styled.button`
     @media (max-width: 768px) {
         height: 45px;
         font-size: 26px;
+    }
+`;
+
+export const AdminButtonsContainer = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 90%;
+    max-width: 400px;
+    margin: 0 auto 20px auto;
+`;
+
+export const AdminButton = styled.button`
+    background-color: #000000;
+    color: #FFFFFF;
+    border-radius: 8px;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    
+    &:hover {
+        background-color: #333333;
+        transform: scale(1.05);
+    }
+
+    &:active {
+        background-color: #555555;
+        transform: scale(0.95);
+    }
+
+    &:focus {
+        outline: 2px solid #FFD700;
+        outline-offset: 2px;
+    }
+
+    @media (max-width: 768px) {
+        font-size: 13px;
+        padding: 8px 12px;
+    }
+`;
+
+export const ButtonContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 10px 0 20px 0;
+`;
+
+export const LogoutButton = styled.button`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background-color: transparent;
+    color: #777;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    margin-bottom: 10px;
+    
+    .icon {
+        font-size: 16px;
+        opacity: 0.8;
+        transform: rotate(-90deg); /* Rotacionar para que a seta aponte para cima/saída */
+        margin-bottom: 2px;
+    }
+    
+    &:hover {
+        background-color: #f9f9f9;
+        border-color: #ccc;
+        color: #444;
+        
+        .icon {
+            opacity: 1;
+        }
+    }
+    
+    &:active {
+        transform: scale(0.98);
+    }
+`;
+
+export const BoxMeeting = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 15px 10px;
+    border: 1px solid #d1d1d1;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+    text-align: center;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+
+    h1 {
+        color: #4a2244;
+        margin-bottom: 8px;
+        font-size: 20px;
+    }
+
+    p {
+        color: #555;
+        margin: 0;
+        font-size: 14px;
+    }
+
+    &:hover {
+        background-color: #f5f5f5;
+        border-color: #c0c0c0;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .input-group {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+        max-width: 350px;
+        margin-bottom: 20px;
+    }
+`;
+
+export const NextMeeting = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 90%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 15px 10px;
+    border: 1px solid #722f37;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: #FAF5F6;
+    box-shadow: 0 2px 8px rgba(114, 47, 55, 0.15);
+
+    h1 {
+        color: #722f37;
+        margin-bottom: 8px;
+        font-size: 22px;
+    }
+
+    p {
+        color: #555;
+        margin: 0;
+        font-size: 14px;
+    }
+
+    &:hover {
+        background-color: #fef8f9;
+        box-shadow: 0 4px 12px rgba(114, 47, 55, 0.2);
+        transform: translateY(-2px);
+    }
+
+    .input-group {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+        max-width: 350px;
+        margin-bottom: 20px;
+    }
+`;
+
+export const BoxWines = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 15px 10px;
+    border: 1px solid #4a2244;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: #f8f6f8;
+    box-shadow: 0 2px 5px rgba(74, 34, 68, 0.1);
+
+    h1 {
+        color: #4a2244;
+        margin-bottom: 8px;
+        font-size: 20px;
+    }
+
+    p {
+        color: #555;
+        margin: 0;
+        font-size: 14px;
+    }
+
+    &:hover {
+        background-color: #f6f4f6;
+        box-shadow: 0 4px 8px rgba(74, 34, 68, 0.15);
+        transform: translateY(-2px);
     }
 `;

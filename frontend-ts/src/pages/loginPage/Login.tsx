@@ -17,7 +17,6 @@ export const Login: React.FC = () => {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         
-        // Form validation
         if (!username.trim()) {
             setError("Usuário é obrigatório");
             return;
@@ -32,7 +31,7 @@ export const Login: React.FC = () => {
         setIsLoading(true);
         
         try {
-            const response = await axios.post(`${BASE_URL}/login`, {
+            const response = await axios.post(`${BASE_URL}/user/login`, {
                 username,
                 password
             });

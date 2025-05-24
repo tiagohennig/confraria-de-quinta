@@ -1,7 +1,9 @@
 export interface Meeting {
     id: string;
     name: string;
-    place: string;
-    date: string;
     description: string;
+    date: string;
+    place: string;
+    host?: string;
+    maxParticipants?: number;
 }

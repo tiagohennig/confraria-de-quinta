@@ -2,7 +2,7 @@ import { BaseDatabase } from "./BaseDatabase";
 import { Meeting } from "../model/meet";
 
 export class MeetDatabase extends BaseDatabase {
-  private static TABLE_NAME = "meets";
+  private static TABLE_NAME = "meetings";
 
   public async insertMeet(meet: Meeting): Promise<void> {
     await BaseDatabase.queryBuilder()

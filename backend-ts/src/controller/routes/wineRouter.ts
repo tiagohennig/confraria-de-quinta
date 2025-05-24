@@ -1,13 +1,14 @@
-import express from "express"
-import { WineController } from "../WineController"
+import express from "express";
+import { WineController } from "../WineController";
+import { authenticateToken } from "../../auth/auth";
 
-export const wineRouter = express.Router()
+export const wineRouter = express.Router();
 
-const wineController = new WineController()
+const wineController = new WineController();
 
-wineRouter.post("/create", wineController.createWine)
-wineRouter.get("/", wineController.getWines)
-wineRouter.get("/:id", wineController.getWineById)
-wineRouter.put("/update", wineController.updateWine)
-wineRouter.delete("/delete/:id", wineController.deleteWine)
-wineRouter.get("/meet/:meetId", wineController.getWineByMeetId)
+wineRouter.post("/create", authenticateToken, wineController.createWine);
+wineRouter.get("/", authenticateToken, wineController.getWines);
+wineRouter.get("/:id", authenticateToken, wineController.getWineById);
+wineRouter.put("/update", authenticateToken, wineController.updateWine);
+wineRouter.delete("/delete/:id", authenticateToken, wineController.deleteWine);
+wineRouter.get("/meet/:meetId", authenticateToken, wineController.getWineByMeetId);

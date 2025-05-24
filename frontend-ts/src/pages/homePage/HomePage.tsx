@@ -1,4 +1,4 @@
-import { InputBox, HomePageContainer, LogoContainer, BoxMeeting, BoxWines, LineWithText, NextMeeting, BlackButton, ButtonContainer } from "./style";
+import { InputBox, HomePageContainer, LogoContainer, BoxMeeting, BoxWines, LineWithText, NextMeeting, BlackButton, ButtonContainer, AdminButtonsContainer, AdminButton, LogoutButton } from "./style";
 import logo from "../../Images/logo.png";
 import { useNavigate } from "react-router-dom";
 import axios, { AxiosResponse } from "axios";
@@ -6,71 +6,146 @@ import { useContext, useEffect, useState } from "react";
 import { goToHomePage, goToLoginPage, goToWinesPage } from "../../routes/Coordinator";
 import { GlobalStateContext } from "../../Global/GlobalStateContext";
 import { jwtDecode } from "jwt-decode";
+import { BASE_URL, Meeting } from "../../Constants/Constants";
+
+interface TokenPayload {
+  username: string;
+  isAdmin: boolean;
+  exp: number;
+}
 
 export const HomePage: React.FC = () => {
     const navigate = useNavigate();
     const { token, setToken } = useContext(GlobalStateContext);
     const { isAdmin, setIsAdmin } = useContext(GlobalStateContext);
-    const BASE_URL = "https://confrariadequinta.herokuapp.com/";
+    const [meetings, setMeetings] = useState<Meeting[]>([]);
+    const [nextMeeting, setNextMeeting] = useState<Meeting | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            const decodedToken: any = jwtDecode(token);
-            const currentTime = Date.now() / 1000; // Tempo atual em segundos
-            if (decodedToken.exp < currentTime) {
-                alert("Token expirado. Faça login novamente.");
-                localStorage.removeItem("token");
+        const validateToken = () => {
+            const storedToken = localStorage.getItem('token');
+            
+            if (!storedToken) {
+                console.log('Token não encontrado. Redirecionando para login.');
+                setToken('');
+                setIsAdmin(false);
                 goToLoginPage(navigate);
-            } else {
-                setToken(token); // Atualiza o token no contexto global
+                return false;
             }
-            setIsAdmin(decodedToken.isAdmin);
-        } else {
-            goToLoginPage(navigate);
+            
+            try {
+                const decodedToken = jwtDecode<TokenPayload>(storedToken);
+                
+                const currentTime = Date.now() / 1000;
+                if (decodedToken.exp < currentTime) {
+                    console.log('Token expirado. Redirecionando para login.');
+                    localStorage.removeItem('token');
+                    setToken('');
+                    setIsAdmin(false);
+                    goToLoginPage(navigate);
+                    return false;
+                }
+                
+                setToken(storedToken);
+                setIsAdmin(decodedToken.isAdmin);
+                
+                return true;
+            } catch (error) {
+                console.error('Erro ao validar token:', error);
+                localStorage.removeItem('token');
+                setToken('');
+                setIsAdmin(false);
+                goToLoginPage(navigate);
+                return false;
+            }
+        };
+        
+        const isValid = validateToken();
+        
+        if (isValid) {
+            fetchMeetings();
         }
+    }, [navigate, setToken, setIsAdmin]);
+
+    const fetchMeetings = async () => {
+        try {
+            setIsLoading(true);
+            const token = localStorage.getItem('token');
+            
+            if (!token) {
+                throw new Error("Token não encontrado");
+            }
+            
+            const nextMeetingResponse = await axios.get(`${BASE_URL}/reunioes/next`, {
+                headers: { Authorization: token }
+            });
+            
+            const allMeetingsResponse = await axios.get(`${BASE_URL}/reunioes`, {
+                headers: { Authorization: token }
+            });
+            
+            setNextMeeting(nextMeetingResponse.data.meeting || null);
+            
+            let allMeetings = allMeetingsResponse.data.meetings || [];
+            const pastMeetings = allMeetings.filter((meeting: Meeting) => {
+                return new Date(meeting.date) < new Date();
+            }).sort((a: Meeting, b: Meeting) => {
+                return new Date(b.date).getTime() - new Date(a.date).getTime();
+            });
+            
+            setMeetings(pastMeetings);
+            
+        } catch (error) {
+            console.error("Erro ao buscar encontros:", error);
+            
+            if (axios.isAxiosError(error) && error.response?.status === 401) {
+                localStorage.removeItem('token');
+                setToken('');
+                setIsAdmin(false);
+                goToLoginPage(navigate);
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const goToAddWinePage = () => {
+        navigate("/adicionarvinho");
     }
-    , []);
 
-    const handleUsername = (event: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(event.target.value);
-    };
+    const goToAddMeetingPage = () => {
+        navigate("/adicionar-reuniao");
+    }
 
-    const handlePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(event.target.value);
-    };
-
-const wineMeetings = [
-    { id: 1, name: "Vinho Verde", description: "Um encontro com 4 vinhos verdes distintos." },
-    { id: 2, name: "Vinhos Brancos", description: "Uma seleção de vinhos brancos." },
-    { id: 3, name: "Vinhos Tintos", description: "Uma seleção de vinhos tintos." },
-    { id: 4, name: "Vinhos Rosés", description: "Uma seleção de vinhos rosés." },
-    { id: 5, name: "Vinhos Espumantes", description: "Uma seleção de vinhos espumantes." },
-    { id: 6, name: "Vinhos de Sobremesa", description: "Uma seleção de vinhos de sobremesa." }
-];
+    const goToAddUserPage = () => {
+    navigate("/adicionar-usuario");
+    }
 
     const handleMeetingDetails = (id: string) => {
-        navigate(`/meeting/${id}`);
-    }
+        navigate(`/reuniao/${id}`);
+    };
 
     const handleLogo = () => {
         goToHomePage(navigate)
     }
 
-const mapWineMeetings = () => {
-    return wineMeetings.map((wine) => {
-        const handleClick = () => {
-            goToHomePage(navigate);
-        };
-
-        return (
-            <BoxMeeting key={wine.id} onClick={() => handleMeetingDetails("2")}>
-                <h1>{wine.name}</h1>
-                <p>{wine.description}</p>
+    const mapWineMeetings = () => {
+        if (isLoading) {
+            return <div>Carregando reuniões...</div>;
+        }
+        
+        if (meetings.length === 0) {
+            return <div>Nenhum encontro anterior encontrado.</div>;
+        }
+        
+        return meetings.map((meeting) => (
+            <BoxMeeting key={meeting.id} onClick={() => handleMeetingDetails(meeting.id)}>
+                <h1>{meeting.name}</h1>
+                <p>{meeting.description}</p>
             </BoxMeeting>
-        );
-    });
-};
+        ));
+    };
 
     const handleClickWines = () => {
         goToHomePage(navigate);
@@ -81,6 +156,11 @@ const mapWineMeetings = () => {
     };
 
     const handleLogout = () => {
+        localStorage.removeItem('token');
+        
+        setToken('');
+        setIsAdmin(false);
+        
         goToLoginPage(navigate);
     };
 
@@ -90,11 +170,13 @@ const mapWineMeetings = () => {
                 <img src={logo} alt="Confraria de Quinta" />
             </LogoContainer>
 
-            {isAdmin && <div>
-                <button>Criar uma reunião</button>
-                <button>Adicionar vinho</button>
-                <button>Adicionar usuário</button>
-            </div>}
+            {isAdmin && (
+            <AdminButtonsContainer>
+                <AdminButton onClick={goToAddMeetingPage}>Criar uma reunião</AdminButton>
+                <AdminButton onClick={goToAddWinePage}>Adicionar vinho</AdminButton>
+                <AdminButton onClick={goToAddUserPage}>Adicionar usuário</AdminButton>
+            </AdminButtonsContainer>
+            )}
     
             <BoxWines onClick={handleWines}>
                 <h1>Vinhos degustados</h1>
@@ -104,10 +186,17 @@ const mapWineMeetings = () => {
                 <span>Próximo encontro</span>
             </LineWithText>
     
-            <NextMeeting onClick={() => handleMeetingDetails("1")}>
-                <h1>Vinhos brancos</h1>
-                <p>Uma seleção de vinhos brancos.</p>
-            </NextMeeting>
+            {nextMeeting ? (
+                <NextMeeting onClick={() => handleMeetingDetails(nextMeeting.id)}>
+                    <h1>{nextMeeting.name}</h1>
+                    <p>{nextMeeting.description}</p>
+                </NextMeeting>
+            ) : (
+                <NextMeeting>
+                    <h1>Nenhum encontro agendado</h1>
+                    <p>Não há encontros agendados no momento.</p>
+                </NextMeeting>
+            )}
     
             <LineWithText>
                 <span>Encontros anteriores</span>
@@ -116,9 +205,9 @@ const mapWineMeetings = () => {
             {mapWineMeetings()}
 
             <ButtonContainer>
-                <BlackButton onClick={handleLogout}>
-                    Sair
-                </BlackButton>
+                <LogoutButton onClick={handleLogout}>
+                    <span className="text">Sair</span>
+                </LogoutButton>
             </ButtonContainer>
 
         </HomePageContainer>

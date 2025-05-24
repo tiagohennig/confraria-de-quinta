@@ -1,20 +1,20 @@
 import { AuthenticationData } from "../model/user";
 import * as jwt from "jsonwebtoken";
+import { SignOptions } from "jsonwebtoken";
 
 class Authenticator {
     generateToken = (payload: AuthenticationData): string => {
-        // Make sure payload includes isAdmin
-        const token = jwt.sign(
-            {
-                username: payload.username,
-                isAdmin: payload.isAdmin
-            }, 
-            process.env.JWT_KEY as string, 
-            {expiresIn: parseInt(process.env.JWT_EXPIRES_IN as string, 10)}
-        )
+    const token = jwt.sign(
+        {
+            username: payload.username,
+            isAdmin: payload.isAdmin
+        }, 
+        process.env.JWT_KEY || "", 
+        {expiresIn: process.env.JWT_EXPIRES_IN || '1d'} as SignOptions
+    )
 
-        return token
-    }
+    return token
+}
 
     getTokenData = (token: string): AuthenticationData => {
         const result = jwt.verify(
