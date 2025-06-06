@@ -78,7 +78,7 @@ return (
             <img src={logo} alt="Confraria de Quinta" />
         </LogoContainer>
         
-        <WinesCounter>{wines.length} vinhos encontrados</WinesCounter>
+        {wines.length > 0 && <WinesCounter>{wines.length} vinhos encontrados</WinesCounter>}
         
         {wines.length === 0 ? (
             <div className="empty-message">Nenhum vinho encontrado</div>
@@ -114,12 +114,11 @@ return (
                         </WineBox>
                     ))}
                 </WineList>
-                
-                <BackButton onClick={() => goToHomePage(navigate)}>
-                    Voltar
-                </BackButton>
             </>
         )}
+        <BackButton onClick={() => goToHomePage(navigate)}>
+            Voltar
+        </BackButton>
     </WinesPageContainer>
 );
 }
