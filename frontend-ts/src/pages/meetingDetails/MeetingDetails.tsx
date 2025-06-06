@@ -20,9 +20,6 @@ import {
     AddWineButton,
     ButtonsContainer,
     EmptyWines,
-    ParticipantsList,
-    ParticipantsHeader,
-    ParticipantCard
 } from './style';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -56,11 +53,6 @@ interface Meeting {
     participants?: { id: string; username: string }[];
 }
 
-interface Participant {
-    id: string;
-    username: string;
-}
-
 export const MeetingDetails = () => {
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
@@ -68,13 +60,6 @@ export const MeetingDetails = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
     const { isAdmin } = useContext(GlobalStateContext);
-    
-    const [participants, setParticipants] = useState<Participant[]>([
-        { id: '1', username: 'joaosilva' },
-        { id: '2', username: 'mariasantos' },
-        { id: '3', username: 'pedroalmeida' },
-        { id: '4', username: 'analuiza' }
-    ]);
 
 useEffect(() => {
     const fetchMeetingDetails = async () => {
@@ -116,7 +101,7 @@ useEffect(() => {
     };
 
     const handleAddWine = () => {
-        navigate(`/adicionar-vinho?meetId=${id}`);
+        navigate("/adicionarvinho");
     };
 
     const formatDate = (dateString: string): string => {
@@ -133,6 +118,20 @@ useEffect(() => {
         const eventDate = new Date(dateString);
         return eventDate < new Date();
     };
+
+    const handleDeleteMeeting = async () => {
+    if (!window.confirm("Tem certeza que deseja deletar esta reunião?")) return;
+    try {
+        const token = localStorage.getItem('token');
+        await axios.delete(`${BASE_URL}/reunioes/delete/${meeting?.id}`, {
+            headers: { Authorization: token }
+        });
+        alert("Reunião deletada com sucesso!");
+        goToHomePage(navigate);
+    } catch (err: any) {
+        alert(err.response?.data?.message || "Erro ao deletar reunião");
+    }
+};
 
     if (isLoading) {
         return (
@@ -256,18 +255,14 @@ useEffect(() => {
                 </AddWineButton>
             )}
 
-            <ParticipantsHeader>
-                <h2>Participantes</h2>
-                <span className="count">{participants.length}/{meeting.maxParticipants}</span>
-            </ParticipantsHeader>
-
-            <ParticipantsList>
-                {participants.map(participant => (
-                    <ParticipantCard key={participant.id}>
-                        {participant.username}
-                    </ParticipantCard>
-                ))}
-            </ParticipantsList>
+            {isAdmin && (
+                <AddWineButton
+                    style={{ background: "#c0392b", marginBottom: 16 }}
+                    onClick={handleDeleteMeeting}
+                >
+                    Deletar reunião
+                </AddWineButton>
+            )}
 
             <ButtonsContainer>
                 <BackButton onClick={() => goToHomePage(navigate)}>

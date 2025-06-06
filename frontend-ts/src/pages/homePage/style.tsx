@@ -314,6 +314,7 @@ export const NextMeeting = styled.div`
     transition: all 0.3s ease;
     background-color: #FAF5F6;
     box-shadow: 0 2px 8px rgba(114, 47, 55, 0.15);
+    margin-bottom: 20px;
 
     h1 {
         color: #722f37;

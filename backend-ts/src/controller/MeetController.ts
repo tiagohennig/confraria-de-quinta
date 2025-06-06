@@ -120,11 +120,11 @@ export class MeetController {
 
     public getNextMeet = async (req: Request, res: Response): Promise<void> => {
         try {
-            const nextMeet = await this.meetBusiness.getNextMeet();
+            const nextMeets = await this.meetBusiness.getNextMeets();
 
             res.status(200).send({ 
                 success: true, 
-                meeting: nextMeet 
+                meetings: nextMeets // agora retorna uma lista
             });
         } catch (error: any) {
             if (error instanceof CustomError) {

@@ -1,7 +1,7 @@
-import { InputBox, HomePageContainer, LogoContainer, BoxMeeting, BoxWines, LineWithText, NextMeeting, BlackButton, ButtonContainer, AdminButtonsContainer, AdminButton, LogoutButton } from "./style";
+import { HomePageContainer, LogoContainer, BoxMeeting, BoxWines, LineWithText, NextMeeting, BlackButton, ButtonContainer, AdminButtonsContainer, AdminButton, LogoutButton } from "./style";
 import logo from "../../Images/logo.png";
 import { useNavigate } from "react-router-dom";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { goToHomePage, goToLoginPage, goToWinesPage } from "../../routes/Coordinator";
 import { GlobalStateContext } from "../../Global/GlobalStateContext";
@@ -19,7 +19,7 @@ export const HomePage: React.FC = () => {
     const { token, setToken } = useContext(GlobalStateContext);
     const { isAdmin, setIsAdmin } = useContext(GlobalStateContext);
     const [meetings, setMeetings] = useState<Meeting[]>([]);
-    const [nextMeeting, setNextMeeting] = useState<Meeting | null>(null);
+    const [nextMeetings, setNextMeetings] = useState<Meeting[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -48,7 +48,7 @@ export const HomePage: React.FC = () => {
                 }
                 
                 setToken(storedToken);
-                setIsAdmin(decodedToken.isAdmin);
+                setIsAdmin(!!decodedToken.isAdmin);
                 
                 return true;
             } catch (error) {
@@ -85,7 +85,7 @@ export const HomePage: React.FC = () => {
                 headers: { Authorization: token }
             });
             
-            setNextMeeting(nextMeetingResponse.data.meeting || null);
+            setNextMeetings(nextMeetingResponse.data.meetings || []);
             
             let allMeetings = allMeetingsResponse.data.meetings || [];
             const pastMeetings = allMeetings.filter((meeting: Meeting) => {
@@ -183,14 +183,18 @@ export const HomePage: React.FC = () => {
             </BoxWines>
     
             <LineWithText>
-                <span>Próximo encontro</span>
+                <span>Próximos encontros</span>
             </LineWithText>
-    
-            {nextMeeting ? (
-                <NextMeeting onClick={() => handleMeetingDetails(nextMeeting.id)}>
-                    <h1>{nextMeeting.name}</h1>
-                    <p>{nextMeeting.description}</p>
-                </NextMeeting>
+
+            {isLoading ? (
+                <div>Carregando próximos encontros...</div>
+            ) : nextMeetings.length > 0 ? (
+                nextMeetings.map(meeting => (
+                    <NextMeeting key={meeting.id} onClick={() => handleMeetingDetails(meeting.id)}>
+                        <h1>{meeting.name}</h1>
+                        <p>{meeting.description}</p>
+                    </NextMeeting>
+                ))
             ) : (
                 <NextMeeting>
                     <h1>Nenhum encontro agendado</h1>

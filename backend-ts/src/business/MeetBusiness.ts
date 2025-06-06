@@ -140,23 +140,21 @@ export class MeetBusiness {
         }
     };
     
-    public getNextMeet = async (): Promise<Meeting | null> => {
-        try {
-            const meetDatabase = new MeetDatabase();
-            const meets = await meetDatabase.getAllMeets();
-            
-            const now = new Date();
-            const futureMeets = meets.filter(meet => new Date(meet.date) > now);
-            
-            futureMeets.sort((a, b) => {
-                const dateA = new Date(a.date);
-                const dateB = new Date(b.date);
-                return dateA.getTime() - dateB.getTime();
-            });
-            
-            return futureMeets.length > 0 ? futureMeets[0] : null;
-        } catch (error: any) {
-            throw new CustomError(500, `Erro ao buscar próximo encontro: ${error.message}`);
-        }
-    };
+public getNextMeets = async (): Promise<Meeting[]> => {
+    try {
+        const meetDatabase = new MeetDatabase();
+        const meets = await meetDatabase.getAllMeets();
+
+        const now = new Date();
+        // Filtra apenas reuniões futuras
+        const futureMeets = meets.filter(meet => new Date(meet.date) > now);
+
+        // Ordena por data (mais próxima primeiro)
+        futureMeets.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+        return futureMeets;
+    } catch (error: any) {
+        throw new CustomError(500, `Erro ao buscar próximas reuniões: ${error.message}`);
+    }
+};
 }
