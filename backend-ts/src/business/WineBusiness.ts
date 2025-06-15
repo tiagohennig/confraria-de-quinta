@@ -43,7 +43,6 @@ export class WineBusiness {
         region,
         grape,
         meet_id,
-        description: input.description,
         oak_ageing_time: input.oak_ageing_time,
         price: input.price,
       });
@@ -129,7 +128,6 @@ export class WineBusiness {
         country,
         region,
         meet_id,
-        description: input.description,
         oak_ageing_time: input.oak_ageing_time,
         price: input.price,
       });

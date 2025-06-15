@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { goToHomePage, goToAddWinePage } from '../../routes/Coordinator';
+import { goToHomePage } from '../../routes/Coordinator';
 import logo from "../../Images/logo.png";
-import { 
-    MeetingDetailsContainer, 
+import {
+    MeetingDetailsContainer,
     LogoContainer,
     MeetingHeader,
     MeetingInfo,
@@ -15,7 +15,6 @@ import {
     WineTitle,
     WineInfo,
     WineInfoItem,
-    WineDescription,
     BackButton,
     AddWineButton,
     ButtonsContainer,
@@ -61,40 +60,40 @@ export const MeetingDetails = () => {
     const [error, setError] = useState('');
     const { isAdmin } = useContext(GlobalStateContext);
 
-useEffect(() => {
-    const fetchMeetingDetails = async () => {
-        try {
-            setIsLoading(true);
-            
-            const token = localStorage.getItem('token');
-            const meetingResponse = await axios.get(`${BASE_URL}/reunioes/${id}`, {
-                headers: { Authorization: token }
-            });
-            
-            const winesResponse = await axios.get(`${BASE_URL}/vinhos/meet/${id}`, {
-                headers: { Authorization: token }
-            });
-            
-            const meetingData = meetingResponse.data.meeting;
-            const winesData = winesResponse.data.wines || [];
-            
-            setMeeting({
-                ...meetingData,
-                wines: winesData
-            });
-            
-        } catch (err: any) {
-            setError(err.response?.data?.message || 'Erro ao carregar detalhes do encontro');
-            console.error('Erro:', err);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    useEffect(() => {
+        const fetchMeetingDetails = async () => {
+            try {
+                setIsLoading(true);
 
-    if (id) {
-        fetchMeetingDetails();
-    }
-}, [id]);
+                const token = localStorage.getItem('token');
+                const meetingResponse = await axios.get(`${BASE_URL}/reunioes/${id}`, {
+                    headers: { Authorization: token }
+                });
+
+                const winesResponse = await axios.get(`${BASE_URL}/vinhos/meet/${id}`, {
+                    headers: { Authorization: token }
+                });
+
+                const meetingData = meetingResponse.data.meeting;
+                const winesData = winesResponse.data.wines || [];
+
+                setMeeting({
+                    ...meetingData,
+                    wines: winesData
+                });
+
+            } catch (err: any) {
+                setError(err.response?.data?.message || 'Erro ao carregar detalhes do encontro');
+                console.error('Erro:', err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        if (id) {
+            fetchMeetingDetails();
+        }
+    }, [id]);
 
     const handleLogo = () => {
         goToHomePage(navigate);
@@ -111,6 +110,7 @@ useEffect(() => {
 
     const formatTime = (dateString: string): string => {
         const date = new Date(dateString);
+        date.setHours(date.getHours() + 3);
         return format(date, "HH:mm", { locale: ptBR });
     };
 
@@ -120,18 +120,18 @@ useEffect(() => {
     };
 
     const handleDeleteMeeting = async () => {
-    if (!window.confirm("Tem certeza que deseja deletar esta reunião?")) return;
-    try {
-        const token = localStorage.getItem('token');
-        await axios.delete(`${BASE_URL}/reunioes/delete/${meeting?.id}`, {
-            headers: { Authorization: token }
-        });
-        alert("Reunião deletada com sucesso!");
-        goToHomePage(navigate);
-    } catch (err: any) {
-        alert(err.response?.data?.message || "Erro ao deletar reunião");
-    }
-};
+        if (!window.confirm("Tem certeza que deseja deletar esta reunião?")) return;
+        try {
+            const token = localStorage.getItem('token');
+            await axios.delete(`${BASE_URL}/reunioes/delete/${meeting?.id}`, {
+                headers: { Authorization: token }
+            });
+            alert("Reunião deletada com sucesso!");
+            goToHomePage(navigate);
+        } catch (err: any) {
+            alert(err.response?.data?.message || "Erro ao deletar reunião");
+        }
+    };
 
     if (isLoading) {
         return (
@@ -179,7 +179,7 @@ useEffect(() => {
                 <MeetingDescription>
                     {meeting.description}
                 </MeetingDescription>
-                
+
                 <MeetingMeta>
                     <MetaItem>
                         <span role="img" aria-label="calendar">📅</span>
@@ -214,13 +214,16 @@ useEffect(() => {
                                 <h3>{wine.name}</h3>
                                 <span className="wine-year">{wine.year}</span>
                             </WineTitle>
-                            
+
                             <WineInfo>
                                 <WineInfoItem>
                                     <strong>Produtor:</strong> {wine.producer}
                                 </WineInfoItem>
                                 <WineInfoItem>
-                                    <strong>País/Região:</strong> {wine.country}, {wine.region}
+                                    <strong>País:</strong> {wine.country}
+                                </WineInfoItem>
+                                <WineInfoItem>
+                                    <strong>Região:</strong> {wine.region}
                                 </WineInfoItem>
                                 <WineInfoItem>
                                     <strong>Uva(s):</strong> {wine.grape}
@@ -230,16 +233,10 @@ useEffect(() => {
                                         <strong>Envelhecimento:</strong> {wine.oakAgeingTime}
                                     </WineInfoItem>
                                 )}
-                                <WineInfoItem className="wine-price">
+                                <WineInfoItem>
                                     <strong>Preço:</strong> {wine.price}
                                 </WineInfoItem>
                             </WineInfo>
-                            
-                            {wine.description && (
-                                <WineDescription>
-                                    <p>{wine.description}</p>
-                                </WineDescription>
-                            )}
                         </WineCard>
                     ))}
                 </WinesList>
@@ -248,7 +245,7 @@ useEffect(() => {
                     <p>Nenhum vinho adicionado para este encontro ainda.</p>
                 </EmptyWines>
             )}
-            
+
             {isAdmin && !isPastEvent(meeting.date) && (
                 <AddWineButton onClick={handleAddWine}>
                     Adicionar vinho para este encontro

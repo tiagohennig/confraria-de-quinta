@@ -7,7 +7,6 @@ export interface Wine {
   region: string;
   grape: string;
   meet_id: string;
-  description?: string;
   oak_ageing_time?: string;
   price?: string;
 }

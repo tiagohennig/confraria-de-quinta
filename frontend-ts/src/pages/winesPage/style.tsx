@@ -95,25 +95,21 @@ export const WineBox = styled.div`
 
 export const WineHeader = styled.div`
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     padding-bottom: 8px;
     margin-bottom: 8px;
     border-bottom: 1px solid #eee;
     width: 100%;
-    box-sizing: border-box;
-    
+
     h2 {
-        margin: 0;
+        margin: 0 0 2px 0;
         font-size: 18px;
         color: #4a2244;
         font-weight: 600;
-        overflow: hidden; /* Impede overflow de texto */
-        text-overflow: ellipsis; /* Adiciona ... em textos longos */
-        flex: 1; /* Permite que o título ocupe o espaço disponível */
-        padding-right: 10px; /* Espaço para o ano */
+        word-break: break-word;
     }
-    
+
     .year {
         background-color: #4a2244;
         color: white;
@@ -121,7 +117,9 @@ export const WineHeader = styled.div`
         border-radius: 4px;
         font-size: 14px;
         font-weight: 600;
-        white-space: nowrap; /* Impede quebra */
+        margin-bottom: 0;
+        margin-top: 0;
+        align-self: flex-start;
     }
 `;
 

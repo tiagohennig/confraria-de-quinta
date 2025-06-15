@@ -221,33 +221,31 @@ export const LogoutButton = styled.button`
     justify-content: center;
     gap: 8px;
     padding: 10px 20px;
-    background-color: transparent;
-    color: #777;
-    border: 1px solid #ddd;
+    background-color: #000;
+    color: #fff;
+    border: none;
     border-radius: 8px;
     font-size: 15px;
     cursor: pointer;
     transition: all 0.2s ease;
     font-weight: 500;
     margin-bottom: 10px;
-    
+
     .icon {
         font-size: 16px;
         opacity: 0.8;
-        transform: rotate(-90deg); /* Rotacionar para que a seta aponte para cima/saída */
+        transform: rotate(-90deg);
         margin-bottom: 2px;
     }
-    
+
     &:hover {
-        background-color: #f9f9f9;
-        border-color: #ccc;
-        color: #444;
-        
+        background-color: #333;
+        color: #fff;
         .icon {
             opacity: 1;
         }
     }
-    
+
     &:active {
         transform: scale(0.98);
     }
@@ -342,6 +340,18 @@ export const NextMeeting = styled.div`
         max-width: 350px;
         margin-bottom: 20px;
     }
+`;
+
+export const MeetingDate = styled.div`
+    margin-top: 8px;
+    padding: 6px 0 0 0;
+    font-weight: 500;
+    color: #722f37;
+    border-top: 1px solid #eee;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    width: 100%;
+    text-align: center;
 `;
 
 export const BoxWines = styled.div`

@@ -146,10 +146,8 @@ public getNextMeets = async (): Promise<Meeting[]> => {
         const meets = await meetDatabase.getAllMeets();
 
         const now = new Date();
-        // Filtra apenas reuniões futuras
         const futureMeets = meets.filter(meet => new Date(meet.date) > now);
 
-        // Ordena por data (mais próxima primeiro)
         futureMeets.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
         return futureMeets;

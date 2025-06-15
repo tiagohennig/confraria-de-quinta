@@ -14,40 +14,53 @@ interface Wine {
     country: string;
     region: string;
     grape: string;
-    description?: string;
     oakAgeingTime?: string;
-    meetId: string;
+    meet_id: string;
     price?: string;
+}
+
+interface Meeting {
+    id: string;
+    name: string;
+    date: string;
 }
 
 export const WinesPage = () => {
     const navigate = useNavigate();
     const [wines, setWines] = useState<Wine[]>([]);
+    const [meetings, setMeetings] = useState<Meeting[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        const fetchWines = async () => {
+        const fetchData = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get(`${BASE_URL}/vinhos`, {
-                    headers: { Authorization: token }
-                });
-                setWines(response.data.wines || []);
+                const [winesRes, meetingsRes] = await Promise.all([
+                    axios.get(`${BASE_URL}/vinhos`, { headers: { Authorization: token } }),
+                    axios.get(`${BASE_URL}/reunioes`, { headers: { Authorization: token } })
+                ]);
+                setWines(winesRes.data.wines || []);
+                setMeetings(meetingsRes.data.meetings || []);
             } catch (err: any) {
-                console.error("Erro ao buscar vinhos:", err);
-                setError(err.response?.data?.message || "Erro ao carregar vinhos");
+                setError(err.response?.data?.message || "Erro ao carregar dados");
             } finally {
                 setIsLoading(false);
             }
         };
 
-        fetchWines();
+        fetchData();
     }, []);
 
     const handleLogo = () => {
         goToHomePage(navigate)
     }
+
+    const getMeetingInfo = (meet_id: string) => {
+        const meeting = meetings.find(m => m.id === meet_id);
+        if (!meeting) return "Encontro não encontrado";
+        return `${meeting.name} (${new Date(meeting.date).toLocaleDateString("pt-BR")})`;
+    };
 
     if (isLoading) {
         return (
@@ -72,53 +85,47 @@ export const WinesPage = () => {
         );
     }
 
-return (
-    <WinesPageContainer>
-        <LogoContainer onClick={handleLogo}>
-            <img src={logo} alt="Confraria de Quinta" />
-        </LogoContainer>
-        
-        {wines.length > 0 && <WinesCounter>{wines.length} vinhos encontrados</WinesCounter>}
-        
-        {wines.length === 0 ? (
-            <div className="empty-message">Nenhum vinho encontrado</div>
-        ) : (
-            <>
-                <WineList>
-                    {wines.map((wine) => (
-                        <WineBox key={wine.id}>
-                            <WineHeader>
-                                <h2>{wine.name}</h2>
-                                <span className="year">{wine.year}</span>
-                            </WineHeader>
-                            
-                            <WineDetails>
-                                <WineInfoColumn>
-                                    <p><strong>Vinícola:</strong> {wine.producer}</p>
-                                    <p><strong>País:</strong> {wine.country}</p>
-                                    <p><strong>Região:</strong> {wine.region}</p>
-                                </WineInfoColumn>
-                                
-                                <WineInfoColumn>
-                                    <p><strong>Uvas:</strong> {wine.grape}</p>
-                                    {wine.price && <p><strong>Preço:</strong> {wine.price}</p>}
-                                    {wine.oakAgeingTime && <p><strong>Envelhecimento:</strong> {wine.oakAgeingTime}</p>}
-                                </WineInfoColumn>
-                            </WineDetails>
-                            
-                            {wine.description && (
-                                <WineDescription>
-                                    <p>{wine.description}</p>
-                                </WineDescription>
-                            )}
-                        </WineBox>
-                    ))}
-                </WineList>
-            </>
-        )}
-        <BackButton onClick={() => goToHomePage(navigate)}>
-            Voltar
-        </BackButton>
-    </WinesPageContainer>
-);
-}
+    return (
+        <WinesPageContainer>
+            <LogoContainer onClick={handleLogo}>
+                <img src={logo} alt="Confraria de Quinta" />
+            </LogoContainer>
+
+            {wines.length > 0 && <WinesCounter>{wines.length} vinhos encontrados</WinesCounter>}
+
+            {wines.length === 0 ? (
+                <div className="empty-message">Nenhum vinho encontrado</div>
+            ) : (
+                <>
+                    <WineList>
+                        {[...wines]
+                            .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'))
+                            .map((wine) => (
+                                <WineBox key={wine.id}>
+                                    <WineHeader>
+                                        <h2>{wine.name}</h2>
+                                        <span className="year">{wine.year}</span>
+                                    </WineHeader>
+
+                                    <WineDetails>
+                                        <WineInfoColumn>
+                                            <p><strong>Vinícola:</strong> {wine.producer}</p>
+                                            <p><strong>País:</strong> {wine.country}</p>
+                                            <p><strong>Região:</strong> {wine.region}</p>
+                                            <p><strong>Encontro:</strong> {getMeetingInfo(wine.meet_id)}</p>
+                                            <p><strong>Uvas:</strong> {wine.grape}</p>
+                                            {wine.price && <p><strong>Preço:</strong> {wine.price}</p>}
+                                            {wine.oakAgeingTime && <p><strong>Envelhecimento:</strong> {wine.oakAgeingTime}</p>}
+                                        </WineInfoColumn>
+                                    </WineDetails>
+                                </WineBox>
+                            ))}
+                    </WineList>
+                </>
+            )}
+            <BackButton onClick={() => goToHomePage(navigate)}>
+                Voltar
+            </BackButton>
+        </WinesPageContainer>
+    );
+};

@@ -114,8 +114,6 @@ export const AddMeetingPage = () => {
             const response = await axios.post(`${BASE_URL}/reunioes/create`, meetingData, {
                 headers: { Authorization: token }
             });
-
-            console.log('Resposta da API:', response.data);
             
             alert('Reunião criada com sucesso!');
             goToHomePage(navigate);

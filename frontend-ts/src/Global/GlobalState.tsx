@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { BASE_URL } from '../Constants/Constants';
 import { GlobalStateContext } from './GlobalStateContext';
-import { useNavigate } from 'react-router-dom';
 
 interface GlobalStateProps {
     children: React.ReactNode;
@@ -38,7 +35,6 @@ const GlobalState: React.FC<GlobalStateProps> = ({ children }) => {
 
     const checkAdmin = async (token: string) => {
         const payload = decodeToken(token);
-        console.log("Payload decodificado:", payload);
         if (payload && payload.isAdmin) {
             setIsAdmin(true);
         } else {

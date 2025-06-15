@@ -1,4 +1,4 @@
-export const BASE_URL = "http://localhost:3003";
+export const BASE_URL = "https://afternoon-brook-27246-437b5a258876.herokuapp.com";
 
 export interface Meeting {
     id: string;

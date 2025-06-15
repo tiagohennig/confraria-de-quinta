@@ -21,7 +21,6 @@ interface WineFormData {
     country: string;
     region: string;
     grape: string;
-    description: string;
     oakAgeingTime: string;
     meetId: string;
     price: string;
@@ -36,7 +35,6 @@ export const AddWine = () => {
         country: '',
         region: '',
         grape: '',
-        description: '',
         oakAgeingTime: '',
         meetId: '',
         price: ''
@@ -86,7 +84,6 @@ export const AddWine = () => {
             country: 'País',
             region: 'Região',
             grape: 'Uvas',
-            description: 'Descrição',
             oakAgeingTime: 'Tempo de Envelhecimento',
             meetId: 'Encontro',
             price: 'Preço'
@@ -142,7 +139,6 @@ const handleSubmit = async (e: FormEvent) => {
             country: formData.country,
             region: formData.region,
             grape: formData.grape,
-            description: formData.description,
             oakAgeingTime: formData.oakAgeingTime,
             meetId: formData.meetId,
             price: formData.price
@@ -251,19 +247,6 @@ const handleSubmit = async (e: FormEvent) => {
                         onChange={handleInputChange}
                         disabled={isLoading}
                         placeholder="Ex: Cabernet Sauvignon, Merlot"
-                    />
-                </FormGroup>
-
-                <FormGroup>
-                    <label htmlFor="description">Descrição</label>
-                    <textarea
-                        id="description"
-                        name="description"
-                        value={formData.description}
-                        onChange={handleInputChange}
-                        disabled={isLoading}
-                        placeholder="Descrição do vinho, notas de degustação..."
-                        rows={3}
                     />
                 </FormGroup>
 

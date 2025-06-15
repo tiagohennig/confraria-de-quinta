@@ -201,20 +201,6 @@ export const WineInfoItem = styled.div`
     }
 `;
 
-export const WineDescription = styled.div`
-    border-top: 1px solid #eee;
-    padding-top: 10px;
-    margin-top: 5px;
-    
-    p {
-        margin: 0;
-        font-size: 14px;
-        color: #666;
-        line-height: 1.5;
-        font-style: italic;
-    }
-`;
-
 export const EmptyWines = styled.div`
     display: flex;
     justify-content: center;

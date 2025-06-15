@@ -124,7 +124,7 @@ export class MeetController {
 
             res.status(200).send({ 
                 success: true, 
-                meetings: nextMeets // agora retorna uma lista
+                meetings: nextMeets
             });
         } catch (error: any) {
             if (error instanceof CustomError) {

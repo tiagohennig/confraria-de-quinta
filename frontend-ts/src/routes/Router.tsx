@@ -9,7 +9,6 @@ import { AddUserPage } from '../pages/addUserPage/AddUserPage';
 
 
 const Router = () => {
-    console.log('Router')
     return (
         <BrowserRouter>
             <Routes>

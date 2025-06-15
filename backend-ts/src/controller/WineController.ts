@@ -19,7 +19,6 @@ export class WineController {
         region: req.body.region,
         meet_id: req.body.meetId,
         oak_ageing_time: req.body.oak_ageing_time,
-        description: req.body.description,
         price: req.body.price
       };
 
@@ -87,7 +86,6 @@ export class WineController {
         region: req.body.region,
         meet_id: req.body.meetId,
         oak_ageing_time: req.body.oak_ageing_time,
-        description: req.body.description,
         price: req.body.price
       };
 
