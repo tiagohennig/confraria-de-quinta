@@ -24,6 +24,7 @@ async function getProjectId() {
       }
     }
   `;
+  
   const result = await graphqlWithAuth(query, { 
     owner: REPO_OWNER, 
     repo: REPO_NAME 
@@ -31,11 +32,11 @@ async function getProjectId() {
   
   // Add debugging to see available projects
   console.log("Available repository projects:");
+  console.log(`Repository: ${REPO_OWNER}/${REPO_NAME}`);
   console.log(`Total projects found: ${result.repository.projectsV2.nodes.length}`);
   
   if (result.repository.projectsV2.nodes.length === 0) {
-    console.log("No repository projects found. You need to create a GitHub Project linked to this repository.");
-    console.log(`Go to https://github.com/${REPO_OWNER}/${REPO_NAME}/projects and create a new project.`);
+    console.log("No repository projects found.");
     return null;
   }
   
@@ -52,11 +53,7 @@ async function getProjectId() {
   if (project) {
     console.log(`Found project: "${project.title}" with ID: ${project.id}`);
   } else {
-    console.log(`Project "${PROJECT_NAME}" not found.`);
-    console.log("Available project names:");
-    result.repository.projectsV2.nodes.forEach(p => {
-      console.log(`- "${p.title}"`);
-    });
+    console.log(`Project "${PROJECT_NAME}" not found in repository projects.`);
   }
   
   return project?.id;
@@ -134,11 +131,10 @@ async function updateField(projectId, itemId, fieldId, value) {
 async function main() {
   try {
     console.log("Starting repository project cycle tracker...");
-    console.log(`Repository: ${REPO_OWNER}/${REPO_NAME}`);
     
     const projectId = await getProjectId();
     if (!projectId) {
-      console.error("Repository project not found. Please create a GitHub Project linked to this repository.");
+      console.error("Repository project not found");
       return;
     }
 
