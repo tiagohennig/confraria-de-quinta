@@ -24,7 +24,7 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install @octokit/graphql
 
       - name: Run cycle time updater
         run: npm start
