@@ -26,6 +26,6 @@ jobs:
         run: npm install @octokit/graphql
 
       - name: Run cycle time updater
-        run: node update-cycle-time.js
+        run: node ../update-cycle-time.js
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
