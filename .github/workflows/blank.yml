@@ -12,15 +12,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set Start Date when moved to In Progress
-        if: "github.event.action == 'labeled' && github.event.label.name.toLowerCase() == 'in progress'"
+        if: github.event.action == 'labeled'
         uses: actions/github-script@v7
         with:
           script: |
-            const startDate = new Date().toISOString().split('T')[0];
-            await github.rest.issues.createComment({
-              ...context.issue,
-              body: `Start Date: ${startDate}`
-            });
+            const label = github.event.label.name.toLowerCase();
+            if (label === 'in progress') {
+              const startDate = new Date().toISOString().split('T')[0];
+              await github.rest.issues.createComment({
+                ...context.issue,
+                body: `Start Date: ${startDate}`
+              });
+            }
 
       - name: Set End Date and Calculate Cycle Time when Closed
         if: github.event.action == 'closed'
