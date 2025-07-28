@@ -8,8 +8,8 @@ const graphqlWithAuth = graphql.defaults({
 });
 
 const PROJECT_NAME = "confraria de quinta"; // Replace with your project name
-const REPO_OWNER = "tiagohennig"; // Replace with your GitHub username
-const REPO_NAME = "confraria-de-quinta"; // Replace with your repository name
+const REPO_OWNER = "tiagohennig";
+const REPO_NAME = "confraria-de-quinta"; // UPDATE THIS with your repository name
 
 async function getProjectId() {
   const query = `
@@ -25,33 +25,26 @@ async function getProjectId() {
     }
   `;
   
+  console.log(`Looking for repository projects in: ${REPO_OWNER}/${REPO_NAME}`);
+  
   const result = await graphqlWithAuth(query, { 
     owner: REPO_OWNER, 
     repo: REPO_NAME 
   });
   
-  // Add debugging to see available projects
   console.log("Available repository projects:");
-  console.log(`Repository: ${REPO_OWNER}/${REPO_NAME}`);
   console.log(`Total projects found: ${result.repository.projectsV2.nodes.length}`);
-  
-  if (result.repository.projectsV2.nodes.length === 0) {
-    console.log("No repository projects found.");
-    return null;
-  }
   
   result.repository.projectsV2.nodes.forEach((p, index) => {
     console.log(`${index + 1}. "${p.title}" (ID: ${p.id})`);
   });
-  
-  console.log(`\nLooking for project named: "${PROJECT_NAME}"`);
   
   const project = result.repository.projectsV2.nodes.find(
     (p) => p.title.toLowerCase() === PROJECT_NAME.toLowerCase()
   );
   
   if (project) {
-    console.log(`Found project: "${project.title}" with ID: ${project.id}`);
+    console.log(`Found project: "${project.title}"`);
   } else {
     console.log(`Project "${PROJECT_NAME}" not found in repository projects.`);
   }
@@ -59,6 +52,7 @@ async function getProjectId() {
   return project?.id;
 }
 
+// ...rest of your functions remain the same...
 async function getProjectItems(projectId) {
   const query = `
     query($projectId: ID!) {
@@ -129,50 +123,40 @@ async function updateField(projectId, itemId, fieldId, value) {
 }
 
 async function main() {
-  try {
-    console.log("Starting repository project cycle tracker...");
-    
-    const projectId = await getProjectId();
-    if (!projectId) {
-      console.error("Repository project not found");
-      return;
+  const projectId = await getProjectId();
+  if (!projectId) {
+    console.error("Repository project not found");
+    return;
+  }
+
+  const items = await getProjectItems(projectId);
+
+  for (const item of items) {
+    const fields = item.fieldValues.nodes;
+    const status = getFieldValue(fields, "Status")?.toLowerCase();
+    const startDate = getFieldValue(fields, "Start Date");
+    const endDate = getFieldValue(fields, "End Date");
+
+    const startDateFieldId = getFieldId(fields, "Start Date");
+    const endDateFieldId = getFieldId(fields, "End Date");
+    const cycleTimeFieldId = getFieldId(fields, "Cycle Time");
+
+    const today = new Date().toISOString().split("T")[0];
+
+    if (status === "in progress" && !startDate && startDateFieldId) {
+      await updateField(projectId, item.id, startDateFieldId, today);
+      console.log(`Set Start Date for issue ${item.content?.number}`);
     }
 
-    console.log("Getting project items...");
-    const items = await getProjectItems(projectId);
-    console.log(`Found ${items.length} items in the project.`);
-
-    for (const item of items) {
-      const fields = item.fieldValues.nodes;
-      const status = getFieldValue(fields, "Status")?.toLowerCase();
-      const startDate = getFieldValue(fields, "Start Date");
-      const endDate = getFieldValue(fields, "End Date");
-
-      const startDateFieldId = getFieldId(fields, "Start Date");
-      const endDateFieldId = getFieldId(fields, "End Date");
-      const cycleTimeFieldId = getFieldId(fields, "Cycle Time");
-
-      const today = new Date().toISOString().split("T")[0];
-
-      if (status === "in progress" && !startDate && startDateFieldId) {
-        await updateField(projectId, item.id, startDateFieldId, today);
-        console.log(`Set Start Date for issue ${item.content?.number}`);
-      }
-
-      if (status === "done" && startDate && !endDate && endDateFieldId && cycleTimeFieldId) {
-        await updateField(projectId, item.id, endDateFieldId, today);
-        const start = new Date(startDate);
-        const end = new Date(today);
-        const diffDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-        await updateField(projectId, item.id, cycleTimeFieldId, diffDays);
-        console.log(`Set End Date and Cycle Time for issue ${item.content?.number}`);
-      }
+    if (status === "done" && startDate && !endDate && endDateFieldId && cycleTimeFieldId) {
+      await updateField(projectId, item.id, endDateFieldId, today);
+      const start = new Date(startDate);
+      const end = new Date(today);
+      const diffDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+      await updateField(projectId, item.id, cycleTimeFieldId, diffDays);
+      console.log(`Set End Date and Cycle Time for issue ${item.content?.number}`);
     }
-    
-    console.log("Repository project cycle tracker completed successfully.");
-  } catch (error) {
-    console.error("Error in main function:", error);
   }
 }
 
-main().catch((err) => console.error("Unhandled error:", err));
+main().catch((err) => console.error(err));
