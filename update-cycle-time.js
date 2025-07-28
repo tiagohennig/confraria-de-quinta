@@ -7,7 +7,7 @@ const graphqlWithAuth = graphql.defaults({
   },
 });
 
-const PROJECT_NAME = "confraria de quinta"; // Replace with your project name
+const PROJECT_NAME = "confraria de quinta"; // Replace with your actual project name
 
 async function getProjectId() {
   const query = `
@@ -23,6 +23,13 @@ async function getProjectId() {
     }
   `;
   const result = await graphqlWithAuth(query);
+  
+  // Add debugging to see available projects
+  console.log("Available projects:");
+  result.viewer.projectsV2.nodes.forEach(p => {
+    console.log(`- "${p.title}" (ID: ${p.id})`);
+  });
+  
   const project = result.viewer.projectsV2.nodes.find(
     (p) => p.title.toLowerCase() === PROJECT_NAME.toLowerCase()
   );
