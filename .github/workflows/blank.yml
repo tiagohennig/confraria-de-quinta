@@ -1,11 +1,15 @@
 
 name: Issue Cycle Time Tracker
 
+permissions:
+  issues: write
+
 on:
   issues:
     types:
       - labeled
       - closed
+      - in progress
 
 jobs:
   track-cycle-time:
