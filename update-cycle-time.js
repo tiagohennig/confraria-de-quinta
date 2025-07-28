@@ -7,34 +7,7 @@ const graphqlWithAuth = graphql.defaults({
   },
 });
 
-async function getProjectId() {
-  const query = `
-    query {
-      viewer {
-        projectsV2(first: 100) {
-          nodes {
-            id
-            title
-          }
-        }
-      }
-    }
-  `;
-  const result = await graphqlWithAuth(query);
-  
-  // Add debugging to see available projects
-  console.log("Available projects:");
-  result.viewer.projectsV2.nodes.forEach(p => {
-    console.log(`- "${p.title}" (ID: ${p.id})`);
-  });
-  
-  const project = result.viewer.projectsV2.nodes.find(
-    (p) => p.title.toLowerCase() === PROJECT_NAME.toLowerCase()
-  );
-  return project?.id;
-}
-
-const PROJECT_NAME = "Gen AI Tracker"; // Replace with your project name
+const PROJECT_NAME = "confraria de quinta"; // Replace with your project name
 
 async function getProjectId() {
   const query = `
