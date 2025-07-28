@@ -8,11 +8,13 @@ const graphqlWithAuth = graphql.defaults({
 });
 
 const PROJECT_NAME = "confraria de quinta"; // Replace with your project name
+const REPO_OWNER = "tiagohennig"; // Replace with your GitHub username
+const REPO_NAME = "confraria-de-quinta"; // Replace with your repository name
 
 async function getProjectId() {
   const query = `
-    query {
-      viewer {
+    query($owner: String!, $repo: String!) {
+      repository(owner: $owner, name: $repo) {
         projectsV2(first: 100) {
           nodes {
             id
@@ -22,25 +24,28 @@ async function getProjectId() {
       }
     }
   `;
-  const result = await graphqlWithAuth(query);
+  const result = await graphqlWithAuth(query, { 
+    owner: REPO_OWNER, 
+    repo: REPO_NAME 
+  });
   
   // Add debugging to see available projects
-  console.log("Available projects:");
-  console.log(`Total projects found: ${result.viewer.projectsV2.nodes.length}`);
+  console.log("Available repository projects:");
+  console.log(`Total projects found: ${result.repository.projectsV2.nodes.length}`);
   
-  if (result.viewer.projectsV2.nodes.length === 0) {
-    console.log("No projects found. You need to create a GitHub Project first.");
-    console.log("Go to https://github.com/users/YOUR_USERNAME/projects and create a new project.");
+  if (result.repository.projectsV2.nodes.length === 0) {
+    console.log("No repository projects found. You need to create a GitHub Project linked to this repository.");
+    console.log(`Go to https://github.com/${REPO_OWNER}/${REPO_NAME}/projects and create a new project.`);
     return null;
   }
   
-  result.viewer.projectsV2.nodes.forEach((p, index) => {
+  result.repository.projectsV2.nodes.forEach((p, index) => {
     console.log(`${index + 1}. "${p.title}" (ID: ${p.id})`);
   });
   
   console.log(`\nLooking for project named: "${PROJECT_NAME}"`);
   
-  const project = result.viewer.projectsV2.nodes.find(
+  const project = result.repository.projectsV2.nodes.find(
     (p) => p.title.toLowerCase() === PROJECT_NAME.toLowerCase()
   );
   
@@ -49,7 +54,7 @@ async function getProjectId() {
   } else {
     console.log(`Project "${PROJECT_NAME}" not found.`);
     console.log("Available project names:");
-    result.viewer.projectsV2.nodes.forEach(p => {
+    result.repository.projectsV2.nodes.forEach(p => {
       console.log(`- "${p.title}"`);
     });
   }
@@ -128,11 +133,12 @@ async function updateField(projectId, itemId, fieldId, value) {
 
 async function main() {
   try {
-    console.log("Starting project cycle tracker...");
+    console.log("Starting repository project cycle tracker...");
+    console.log(`Repository: ${REPO_OWNER}/${REPO_NAME}`);
     
     const projectId = await getProjectId();
     if (!projectId) {
-      console.error("Project not found. Please create a GitHub Project first.");
+      console.error("Repository project not found. Please create a GitHub Project linked to this repository.");
       return;
     }
 
@@ -167,7 +173,7 @@ async function main() {
       }
     }
     
-    console.log("Project cycle tracker completed successfully.");
+    console.log("Repository project cycle tracker completed successfully.");
   } catch (error) {
     console.error("Error in main function:", error);
   }
