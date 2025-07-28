@@ -7,7 +7,7 @@ const graphqlWithAuth = graphql.defaults({
   },
 });
 
-const PROJECT_NAME = "confraria-de-quinta"; // Replace with your project name
+const PROJECT_NAME = "confraria de quinta"; // Replace with your project name
 
 async function getProjectId() {
   const query = `
