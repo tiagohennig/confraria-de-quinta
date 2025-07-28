@@ -22,6 +22,6 @@ jobs:
           node-version: '20'
 
       - name: Run cycle time updater
-        run: node scripts/update-cycle-time.js
+        run: node ./update-cycle-time.js
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
