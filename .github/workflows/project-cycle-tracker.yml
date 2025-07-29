@@ -2,7 +2,7 @@ name: Project Cycle Tracker
 
 on:
   schedule:
-    - cron: '*/5 * * * *'  # Every 5 min
+    - cron: '10 * * * *'  # Every 5 min
   workflow_dispatch:  # Allow manual trigger
 
 permissions:
